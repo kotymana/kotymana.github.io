@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bubble Land</title>
+  <link rel="canonical" href="https://www.bubbleland.hu/">
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <meta name="description" content="Egyedi, pasztell hangulatú ballon- és partydekor – születésnap, évforduló, babaváró, üzletmegnyitó, ugrálóvár és Bubblehouse bérlés. Gyors ajánlat, profi kivitelezés." />
+  <meta name="keywords" content="születésnapi dekoráció, évfordulós dekoráció, babaváró, üzletmegnyitó, gender party, gender reveal, ugrálóvár, ugrálókastély, bubblehouse, party dekor, léggömb dekoráció, lufidekor, balloon decor, balloon party, birthday decoration, ugrálóvár bérlés, bubblehouse bérlés, labdamedence, ugrálóvár csúszdával, buborékház bérlés, flitterfal bérlés" />
+
+  <style>
+    :root{--peach:#F5C8A7;--mint:#CDD9C5;--pink:#F1DEE2;--lavender:#D9CCE0;--cream:#F8E6CE;--ink:#222;--ink-2:#444;--bg:#FCFCFC;--white:#FFF;--radius:18px;--shadow:0 10px 30px rgba(0,0,0,.06)}
+    html{scroll-behavior:smooth}
+    *,*::before,*::after{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.6;overflow-x:hidden}
+
+    /* Navigáció */
+    .nav{position:sticky;top:0;z-index:1000;background:var(--white);box-shadow:0 2px 20px rgba(0,0,0,.04)}
+    .nav-wrap{max-width:1100px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .brand{font-size:20px;font-weight:700;letter-spacing:.06em}
+    .brand em{font-style:normal;color:var(--peach)}
+    .menu{display:flex;gap:22px;align-items:center}
+    .menu a{color:var(--ink-2);text-decoration:none;font-weight:600;letter-spacing:.02em;padding:8px 10px;border-radius:10px;transition:background-color .25s}
+    .menu a:hover{background:var(--mint)}
+    @media (max-width:640px){
+      .menu{overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch;scrollbar-width:thin;padding-bottom:6px;margin:0 -8px;padding-left:8px;padding-right:8px}
+      .menu::-webkit-scrollbar{height:6px}
+      .menu::-webkit-scrollbar-thumb{background:#ddd;border-radius:10px}
+      .menu a{flex:0 0 auto}
+    }
+
+    /* Hero */
+    .hero{background:
+      radial-gradient(1200px 400px at 20% 0%,var(--pink),transparent 60%),
+      radial-gradient(1200px 400px at 80% 20%,var(--lavender),transparent 60%),
+      linear-gradient(180deg,var(--cream),var(--bg));
+      border-bottom:1px solid #eee;
+    }
+    .hero-inner{max-width:1100px;margin:0 auto;padding:72px 20px 64px;display:grid;gap:28px;grid-template-columns:1.2fr .8fr;align-items:center}
+    .hero h1{margin:0;font-size:clamp(28px,4.2vw,48px);line-height:1.1}
+    .hero p{margin:8px 0 24px;color:#333}
+    .cta-row{display:flex;gap:12px;flex-wrap:wrap}
+    .btn{appearance:none;border:none;padding:12px 18px;border-radius:999px;font-weight:700;cursor:pointer;box-shadow:var(--shadow)}
+    .btn-primary{background:var(--peach)} .btn-primary:hover{filter:brightness(.98)}
+    .btn-ghost{background:var(--white);border:2px solid var(--lavender)}
+
+    /* Rotátorok */
+    .rotator{width:100%;aspect-ratio:4/3;border-radius:var(--radius);overflow:hidden;position:relative;background:#f7f7f7;border:1px solid #eee}
+    .rotator img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;opacity:0;transition:opacity 1.2s ease;will-change:transform,opacity}
+    .rotator img.show{opacity:1}
+    @keyframes slideInFromRight{from{transform:translateX(12%);opacity:0}to{transform:translateX(0);opacity:1}}
+    @keyframes slideOutToLeft{from{transform:translateX(0);opacity:1}to{transform:translateX(-12%);opacity:0}}
+    @keyframes slideInFromLeft{from{transform:translateX(-12%);opacity:0}to{transform:translateX(0);opacity:1}}
+    @keyframes slideOutToRight{from{transform:translateX(0);opacity:1}to{transform:translateX(12%);opacity:0}}
+    .fade-in{animation:fadeIn .9s ease forwards}.fade-out{animation:fadeOut .9s ease forwards}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}} @keyframes fadeOut{from{opacity:1}to{opacity:0}}
+    .slide-in-right{animation:slideInFromRight .9s ease forwards}
+    .slide-out-left{animation:slideOutToLeft .9s ease forwards}
+    .slide-in-left{animation:slideInFromLeft .9s ease forwards}
+    .slide-out-right{animation:slideOutToRight .9s ease forwards}
+
+    /* Szekciók */
+    section{padding:72px 20px}
+    .container{max-width:1100px;margin:0 auto}
+    .section-head{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:28px}
+    .section-head h2{margin:0;font-size:clamp(22px,3vw,34px)}
+
+    /* Rólunk */
+    .about{display:grid;gap:28px;grid-template-columns:1fr 1fr;align-items:center}
+
+    /* Árak */
+    .tabs{display:flex;gap:8px;flex-wrap:wrap}
+    .tab-btn{background:var(--white);border:2px solid var(--mint);padding:10px 14px;border-radius:999px;font-weight:700;cursor:pointer}
+    .tab-btn[aria-selected="true"]{background:var(--mint)}
+    .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;border:1px solid rgba(0,0,0,.04);display:grid;gap:12px}
+    .price{font-size:28px;font-weight:800}
+    .badge{display:inline-block;background:var(--peach);padding:6px 10px;border-radius:999px;font-size:12px;font-weight:800;letter-spacing:.04em}
+
+    /* Galéria */
+    .gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .gallery-item{position:relative;overflow:hidden;border-radius:14px;background:#eee}
+    .gallery-item img{width:100%;height:100%;object-fit:cover;display:block;aspect-ratio:4/3;transition:transform .35s}
+    .gallery-item:hover img{transform:scale(1.03)}
+
+    /* 6-os slider */
+    .gallery-six{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .gallery-wrap{position:relative;overflow:hidden}
+    .gal-btn{position:absolute;top:50%;transform:translateY(-50%);border:none;background:var(--white);box-shadow:var(--shadow);border-radius:999px;width:42px;height:42px;font-weight:900;cursor:pointer}
+    .gal-btn:disabled{opacity:.5;cursor:default}
+    .gal-prev{left:8px}.gal-next{right:8px}
+
+    /* Lightbox */
+    .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:24px;z-index:2000}
+    .lightbox.open{display:flex}
+    .lightbox img{max-width:min(1200px,96vw);max-height:86vh;border-radius:10px;box-shadow:var(--shadow)}
+    .lightbox button{border:none;background:var(--white);padding:8px 12px;border-radius:999px;font-weight:800;cursor:pointer}
+    .lightbox .close{position:absolute;top:16px;right:16px}
+    .lightbox .prev{left:16px;position:absolute;top:50%;transform:translateY(-50%)}
+    .lightbox .next{right:16px;position:absolute;top:50%;transform:translateY(-50%)}
+
+    /* Elérhetőség */
+    .contact-grid{display:grid;grid-template-columns:1fr;gap:22px} /* form nincs, 1 oszlop elég */
+
+    /* Cookie sáv */
+    .cookiebar{position:fixed;left:16px;right:16px;bottom:16px;z-index:3000;background:var(--white);border:1px solid #e8e8e8;border-radius:14px;box-shadow:var(--shadow);padding:14px 16px;display:none;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+    .cookiebar.show{display:flex}
+    .cookiebar small{color:#555}
+
+    /* Lábléc */
+    footer{padding:36px 20px;background:var(--white);border-top:1px solid #eee;color:#666}
+
+    /* Reszponzív */
+    @media (max-width:920px){
+      .hero-inner{grid-template-columns:1fr}
+      .about{grid-template-columns:1fr}
+      .cards{grid-template-columns:1fr 1fr}
+      .gallery-grid{grid-template-columns:1fr 1fr}
+    }
+    @media (max-width:520px){
+      .cards{grid-template-columns:1fr}
+      .gallery-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <header class="nav">
+    <div class="nav-wrap">
+      <div class="brand">Bubble <em>Land</em></div>
+      <nav>
+        <div class="menu" id="menu">
+          <a href="#rolunk">Rólunk</a>
+          <a href="#arak">Árak</a>
+          <a href="#galeria">Galéria</a>
+          <a href="#elerhetoseg">Elérhetőség</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <div>
+        <h1>Letisztult dekoráció és élmény <span style="background: var(--mint); padding: 0 .25em; border-radius: .4em">egy kézből</span></h1>
+        <p>Webshop és adatbázis nélkül, gyors ajánlatadással. Válassz dekorációink közül, vagy kérj Ugrálóvár/Bubblehouse bérlést – mindent intézünk.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#arak">Megnézem az árakat</a>
+          <a class="btn btn-ghost" href="#elerhetoseg">Kapcsolatfelvétel</a>
+        </div>
+      </div>
+      <!-- Dinamikus HERO rotátor -->
+      <div class="rotator" id="heroRotator">
+        <img alt="Bemutató kép" />
+        <img alt="Bemutató kép" />
+      </div>
+    </div>
+  </section>
+
+  <section id="rolunk">
+    <div class="container">
+      <div class="section-head">
+        <h2>Rólunk</h2>
+        <span class="badge">Családbarát & megbízható</span>
+      </div>
+      <div class="about">
+        <div>
+          <p>Esztétikus, pasztell színvilágú ballon- és partydekorációt készítünk privát és céges eseményekre. Legyen szó születésnapról, évfordulóról, babaváróról, üzletmegnyitóról vagy tematikus fotófalról, a tervezéstől a helyszíni installig mindent vállalunk. Kínálatunk része az ugrálóvár és a Bubblehouse bérlés is.</p>
+          <p>Kulcsszolgáltatásaink: lufidekor, ballon arch/garland, flitterfal bérlés, labdamedence, ugrálóvár csúszdával, gender reveal installációk.</p>
+          <ul>
+            <li>Gyors válasz és rugalmas időpontok</li>
+            <li>Igényes kivitelezés, fotóbarát részletek</li>
+            <li>Átlátható árak, rejtett költségek nélkül</li>
+          </ul>
+        </div>
+        <!-- Dinamikus ABOUT rotátor -->
+        <div class="rotator" id="aboutRotator">
+          <img alt="Rólunk illusztráció" />
+          <img alt="Rólunk illusztráció" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Galéria -->
+  <section id="galeria">
+    <div class="container">
+      <div class="section-head">
+        <h2>Galéria</h2>
+        <span class="badge">Folyamatosan bővül</span>
+      </div>
+      <div class="gallery-wrap">
+        <div class="gallery-six" id="gallerySix"></div>
+        <button class="gal-btn gal-prev" id="galPrev" aria-label="Előző 6">‹</button>
+        <button class="gal-btn gal-next" id="galNext" aria-label="Következő 6">›</button>
+      </div>
+    </div>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox" aria-modal="true" role="dialog" aria-label="Képnagyítás">
+      <button class="close" id="lightboxClose" aria-label="Bezárás">Bezár</button>
+      <button class="prev" id="lightboxPrev" aria-label="Előző">‹</button>
+      <img alt="Nagyított kép" src="" id="lightboxImg">
+      <button class="next" id="lightboxNext" aria-label="Következő">›</button>
+    </div>
+  </section>
+
+  <section id="arak">
+    <div class="container">
+      <div class="section-head">
+        <h2>Árak</h2>
+        <div class="tabs" role="tablist">
+          <button class="tab-btn" role="tab" aria-selected="true" aria-controls="tab-dekor" id="btn-dekor">Dekoráció</button>
+          <button class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-ugralo" id="btn-ugralo">Ugrálóvár • Bubblehouse</button>
+        </div>
+      </div>
+
+      <!-- Dekoráció kártyák -->
+      <div id="tab-dekor" role="tabpanel">
+        <div class="cards">
+          <article class="card">
+            <h3>Alap csomag</h3>
+            <p>Kisebb ünnepekre: 1 háttér, 1 dekor szett, alap felirat.</p>
+            <div class="price">29 900 Ft</div>
+            <button class="btn btn-primary quote-btn">Ajánlatot kérek</button>
+          </article>
+          <article class="card">
+            <h3>Standard</h3>
+            <p>Dupla háttér, asztaldekor, 3 féle kiegészítő.</p>
+            <div class="price">49 900 Ft</div>
+            <button class="btn btn-primary quote-btn">Ajánlatot kérek</button>
+          </article>
+          <article class="card">
+            <h3>Prémium</h3>
+            <p>Nagyobb eseményekre: egyedi paletta, felirat, helyszíni install.</p>
+            <div class="price">89 900 Ft</div>
+            <button class="btn btn-primary quote-btn">Ajánlatot kérek</button>
+          </article>
+        </div>
+      </div>
+
+      <!-- Ugrálóvár / Bubblehouse kártyák -->
+      <div id="tab-ugralo" role="tabpanel" hidden>
+        <div class="cards">
+          <article class="card">
+            <h3>Ugrálóvár – alap</h3>
+            <p>4 órás bérlés, helyszíni telepítés.</p>
+            <div class="price">39 900 Ft</div>
+            <button class="btn btn-primary quote-btn">Ajánlatot kérek</button>
+          </article>
+          <article class="card">
+            <h3>Ugrálóvár – egész nap</h3>
+            <p>10 órás bérlés, felügyelettel kérhető.</p>
+            <div class="price">69 900 Ft</div>
+            <button class="btn btn-primary quote-btn">Ajánlatot kérek</button>
+          </article>
+          <article class="card">
+            <h3>Bubblehouse</h3>
+            <p>Átlátszó gömbház dekorral – fotózáshoz és partikhoz.</p>
+            <div class="price">egyedi ajánlat</div>
+            <button class="btn btn-primary quote-btn">Ajánlatot kérek</button>
+          </article>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="elerhetoseg">
+    <div class="container">
+      <div class="section-head">
+        <h2>Elérhetőség</h2>
+        <span class="badge">24 órán belüli válasz</span>
+      </div>
+
+      <div class="contact-grid">
+        <div>
+          <h3>Kapcsolat</h3>
+          <p>
+            <strong>Telefon:</strong> <a href="tel:+36306473035">+36 30 647 3035</a><br>
+            <strong>Telefon:</strong> <a href="tel:+36204926021">+36 20 492 6021</a><br>
+            <strong>E-mail:</strong> <a href="mailto:info@pelda.hu">info@pelda.hu</a>
+          </p>
+          <p>Írj nekünk e-mailt vagy hívj minket a fenti elérhetőségeken.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center;">
+        <div>© <span id="year"></span> Bubble Land • Minden jog fenntartva</div>
+        <div style="display:flex;gap:10px;align-items:center;overflow-x:auto;white-space:nowrap;">
+          <a href="#rolunk">Rólunk</a><span>•</span>
+          <a href="#arak">Árak</a><span>•</span>
+          <a href="#galeria">Galéria</a><span>•</span>
+          <a href="#elerhetoseg">Elérhetőség</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Cookie sáv -->
+  <div class="cookiebar" id="cookiebar" role="region" aria-label="Sütihasználat">
+    <small>Ez a weboldal sütiket használ a jobb felhasználói élmény érdekében.</small>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-ghost" id="cookieDecline">Elutasítom</button>
+      <button class="btn btn-primary" id="cookieAccept">Elfogadom</button>
+    </div>
+  </div>
+
+  <script>
+    // ===== Tabs =====
+    const btnDekor=document.getElementById('btn-dekor');
+    const btnUgralo=document.getElementById('btn-ugralo');
+    const tabDekor=document.getElementById('tab-dekor');
+    const tabUgralo=document.getElementById('tab-ugralo');
+    function selectTab(which){const dekor=which==='dekor';btnDekor?.setAttribute('aria-selected',dekor);btnUgralo?.setAttribute('aria-selected',!dekor);if(tabDekor)tabDekor.hidden=!dekor;if(tabUgralo)tabUgralo.hidden=dekor;}
+    btnDekor?.addEventListener('click',()=>selectTab('dekor'));
+    btnUgralo?.addEventListener('click',()=>selectTab('ugralo'));
+
+    // ===== Galéria – képlista =====
+    const galleryImages=[
+      'assets/img/img1.jpg','assets/img/img3.jpg','assets/img/img5.jpg','assets/img/img6.jpg',
+      'assets/img/img8.jpg','assets/img/img9.jpg','assets/img/img11.jpg','assets/img/img12.jpg',
+      'assets/img/img14.jpg','assets/img/img15.jpg','assets/img/img16.jpg','assets/img/img18.jpg'
+    ];
+
+    // ===== Dinamikus kép-rotátorok (Hero + Rólunk) =====
+    function makeRotator(containerId,getOtherCurrentSrc){
+      const wrap=document.getElementById(containerId); if(!wrap) return null;
+      const imgs=wrap.querySelectorAll('img'); if(imgs.length<2) return null;
+      let current=0, currentSrc=null;
+
+      function pickInitial(){
+        let start=galleryImages[Math.floor(Math.random()*galleryImages.length)];
+        const other=getOtherCurrentSrc?.();
+        if(other && start===other){
+          const idx=(galleryImages.indexOf(start)+1)%galleryImages.length;
+          start=galleryImages[idx];
+        }
+        currentSrc=start; imgs[current].src=start; imgs[current].classList.add('show');
+      }
+      function pickNext(){
+        let next=currentSrc; const other=getOtherCurrentSrc?.();
+        for(let g=0; g<10 && (next===currentSrc || (other && next===other)); g++){
+          next=galleryImages[Math.floor(Math.random()*galleryImages.length)];
+        }
+        return next;
+      }
+      function randomEffect(){ return ['fade','slide-right','slide-left'][Math.floor(Math.random()*3)]; }
+      function applyTransition(nextSrc){
+        const a=imgs[current], b=imgs[1-current]; b.src=nextSrc; b.className=''; a.className='';
+        const eff=randomEffect();
+        if(eff==='fade'){ a.classList.add('fade-out'); b.classList.add('fade-in','show'); }
+        else if(eff==='slide-right'){ a.classList.add('slide-out-left'); b.classList.add('slide-in-right','show'); }
+        else { a.classList.add('slide-out-right'); b.classList.add('slide-in-left','show'); }
+        current=1-current; currentSrc=nextSrc;
+      }
+      function scheduleNext(){ const delay=6000+Math.floor(Math.random()*5000);
+        setTimeout(()=>{ applyTransition(pickNext()); scheduleNext(); }, delay); }
+      pickInitial(); scheduleNext(); return { getCurrentSrc:()=>currentSrc };
+    }
+    let aboutRef=null;
+    const heroRef=makeRotator('heroRotator',()=>aboutRef?.getCurrentSrc());
+    const aboutRefInit=makeRotator('aboutRotator',()=>heroRef?.getCurrentSrc());
+    aboutRef=aboutRefInit;
+
+    // ===== 6-os lapozás a Galériában =====
+    const pageSize=6; let page=0;
+    const six=document.getElementById('gallerySix');
+    const prevBtn=document.getElementById('galPrev');
+    const nextBtn=document.getElementById('galNext');
+
+    function renderGalleryPage(){
+      six.innerHTML='';
+      const slice=galleryImages.slice(page*pageSize,(page+1)*pageSize);
+      slice.forEach(src=>{
+        const a=document.createElement('a'); a.className='gallery-item'; a.href=src;
+        const img=document.createElement('img'); img.loading='lazy'; img.alt='Galéria kép'; img.src=src;
+        a.appendChild(img); six.appendChild(a);
+      });
+      prevBtn.disabled=page===0;
+      nextBtn.disabled=(page+1)*pageSize>=galleryImages.length;
+    }
+
+    nextBtn?.addEventListener('click',()=>{ if((page+1)*pageSize<galleryImages.length){ page++; renderGalleryPage(); } });
+    prevBtn?.addEventListener('click',()=>{ if(page>0){ page--; renderGalleryPage(); } });
+
+    // ===== Lightbox =====
+    const lightbox=document.getElementById('lightbox');
+    const lightboxImg=document.getElementById('lightboxImg');
+    const closeBtn=document.getElementById('lightboxClose');
+    const nextL=document.getElementById('lightboxNext');
+    const prevL=document.getElementById('lightboxPrev');
+    let currentIndex=-1;
+
+    function openAt(index){
+      currentIndex=(index+galleryImages.length)%galleryImages.length;
+      lightboxImg.src=galleryImages[currentIndex];
+      lightbox.classList.add('open');
+    }
+
+    six?.addEventListener('click',(e)=>{
+      const a=e.target.closest('a.gallery-item'); if(!a) return; e.preventDefault();
+      const href=a.getAttribute('href');
+      openAt(galleryImages.indexOf(href));
+    });
+
+    function closeLightbox(){ lightbox.classList.remove('open'); lightboxImg.src=''; }
+    closeBtn?.addEventListener('click', closeLightbox);
+    lightbox?.addEventListener('click',(e)=>{ if(e.target===lightbox) closeLightbox(); });
+    function next(){ openAt(currentIndex+1); }
+    function prev(){ openAt(currentIndex-1); }
+    nextL?.addEventListener('click', next);
+    prevL?.addEventListener('click', prev);
+    window.addEventListener('keydown',(e)=>{
+      if(!lightbox.classList.contains('open')) return;
+      if(e.key==='Escape') closeLightbox();
+      if(e.key==='ArrowRight') next();
+      if(e.key==='ArrowLeft') prev();
+    });
+
+    // ===== "Ajánlatot kérek" gombok → mailto (form helyett) =====
+    document.querySelectorAll('.quote-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const card=btn.closest('.card');
+        const title=card?.querySelector('h3')?.textContent?.trim() || 'Ajánlatkérés';
+        const subject=`Ajánlatkérés – ${title}`;
+        const body=[
+          'Kedves Bubble Land,',
+          '',
+          `A(z) "${title}" csomag iránt érdeklődöm.`,
+          '',
+          'Név:',
+          'Telefon:',
+          'Rendezvény dátuma/helyszín:',
+          '',
+          'Köszönöm!'
+        ].join('\n');
+        const href=`mailto:info@bubbleland.hu?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        window.location.href = href;
+      });
+    });
+
+    // Induló lap + év
+    renderGalleryPage();
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // ===== Cookie sáv =====
+    const cookiebar=document.getElementById('cookiebar');
+    const cookieAccept=document.getElementById('cookieAccept');
+    const cookieDecline=document.getElementById('cookieDecline');
+    const COOKIE_KEY='cookie_consent_bubbleland';
+    function showCookiebar(){ if(localStorage.getItem(COOKIE_KEY)) return; cookiebar.classList.add('show'); }
+    cookieAccept?.addEventListener('click', ()=>{ localStorage.setItem(COOKIE_KEY,'accepted'); cookiebar.classList.remove('show'); });
+    cookieDecline?.addEventListener('click', ()=>{ localStorage.setItem(COOKIE_KEY,'declined'); cookiebar.classList.remove('show'); });
+    showCookiebar();
+  </script>
+</body>
+</html>
