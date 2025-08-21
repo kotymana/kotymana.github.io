@@ -17,18 +17,19 @@
 
     /* Navigáció */
     .nav{position:sticky;top:0;z-index:1000;background:var(--white);box-shadow:0 2px 20px rgba(0,0,0,.04)}
-    .nav-wrap{max-width:1100px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .nav-wrap{max-width:1100px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:relative}
     .brand{font-size:20px;font-weight:700;letter-spacing:.06em}
     .brand em{font-style:normal;color:var(--peach)}
-    .menu{display:flex;gap:22px;align-items:center}
+    nav .menu{display:flex;gap:22px;align-items:center}
     .menu a{color:var(--ink-2);text-decoration:none;font-weight:600;letter-spacing:.02em;padding:8px 10px;border-radius:10px;transition:background-color .25s}
     .menu a:hover{background:var(--mint)}
-    @media (max-width:640px){
-      .menu{overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch;scrollbar-width:thin;padding-bottom:6px;margin:0 -8px;padding-left:8px;padding-right:8px}
-      .menu::-webkit-scrollbar{height:6px}
-      .menu::-webkit-scrollbar-thumb{background:#ddd;border-radius:10px}
-      .menu a{flex:0 0 auto}
-    }
+
+    /* Hamburger */
+    .hamburger{display:none;appearance:none;background:transparent;border:none;width:44px;height:44px;border-radius:10px;align-items:center;justify-content:center;cursor:pointer}
+    .hamburger .bar{display:block;width:24px;height:2px;background:var(--ink);border-radius:2px;margin:4px 0;transition:transform .2s, opacity .2s}
+    .hamburger.active .bar:nth-child(1){transform:translateY(6px) rotate(45deg)}
+    .hamburger.active .bar:nth-child(2){opacity:0}
+    .hamburger.active .bar:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
 
     /* Hero */
     .hero{background:
@@ -101,7 +102,7 @@
     .lightbox .next{right:16px;position:absolute;top:50%;transform:translateY(-50%)}
 
     /* Elérhetőség */
-    .contact-grid{display:grid;grid-template-columns:1fr;gap:22px} /* form nincs, 1 oszlop elég */
+    .contact-grid{display:grid;grid-template-columns:1fr;gap:22px}
 
     /* Cookie sáv */
     .cookiebar{position:fixed;left:16px;right:16px;bottom:16px;z-index:3000;background:var(--white);border:1px solid #e8e8e8;border-radius:14px;box-shadow:var(--shadow);padding:14px 16px;display:none;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
@@ -113,13 +114,24 @@
 
     /* Reszponzív */
     @media (max-width:920px){
+      .hamburger{display:inline-flex}
+      nav .menu{
+        position:absolute;top:calc(100% + 8px);left:20px;right:20px;
+        background:var(--white);border:1px solid #eee;border-radius:14px;box-shadow:var(--shadow);
+        flex-direction:column;gap:0;padding:8px;
+        transform-origin:top;transform:scaleY(.95);
+        opacity:0;pointer-events:none;
+        transition:opacity .22s ease, transform .22s ease;
+      }
+      nav .menu a{padding:10px 12px;border-radius:10px}
+      nav .menu a:hover{background:#f4f4f4}
+      nav .menu.open{opacity:1;transform:scaleY(1);pointer-events:auto}
+      .cards{grid-template-columns:1fr}
+      .gallery-grid{grid-template-columns:1fr}
       .hero-inner{grid-template-columns:1fr}
       .about{grid-template-columns:1fr}
-      .cards{grid-template-columns:1fr 1fr}
-      .gallery-grid{grid-template-columns:1fr 1fr}
     }
     @media (max-width:520px){
-      .cards{grid-template-columns:1fr}
       .gallery-grid{grid-template-columns:1fr}
     }
   </style>
@@ -129,6 +141,9 @@
     <div class="nav-wrap">
       <div class="brand">Bubble <em>Land</em></div>
       <nav>
+        <button class="hamburger" id="navToggle" aria-label="Menü megnyitása" aria-controls="menu" aria-expanded="false">
+          <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+        </button>
         <div class="menu" id="menu">
           <a href="#rolunk">Rólunk</a>
           <a href="#arak">Árak</a>
@@ -149,7 +164,6 @@
           <a class="btn btn-ghost" href="#elerhetoseg">Kapcsolatfelvétel</a>
         </div>
       </div>
-      <!-- Dinamikus HERO rotátor -->
       <div class="rotator" id="heroRotator">
         <img alt="Bemutató kép" />
         <img alt="Bemutató kép" />
@@ -173,7 +187,6 @@
             <li>Átlátható árak, rejtett költségek nélkül</li>
           </ul>
         </div>
-        <!-- Dinamikus ABOUT rotátor -->
         <div class="rotator" id="aboutRotator">
           <img alt="Rólunk illusztráció" />
           <img alt="Rólunk illusztráció" />
@@ -209,13 +222,15 @@
     <div class="container">
       <div class="section-head">
         <h2>Árak</h2>
-        <div class="tabs" role="tablist">
-          <button class="tab-btn" role="tab" aria-selected="true" aria-controls="tab-dekor" id="btn-dekor">Dekoráció</button>
-          <button class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-ugralo" id="btn-ugralo">Ugrálóvár • Bubblehouse</button>
+        <div class="tabs" role="tablist" aria-label="Ártípusok">
+          <button class="tab-btn" role="tab" aria-selected="true"  aria-controls="tab-dekor"       id="btn-dekor"       data-target="tab-dekor">Dekoráció</button>
+          <button class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-ugralovar"   id="btn-ugralovar"  data-target="tab-ugralovar">Ugrálóvár</button>
+          <button class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-bubblehouse" id="btn-bubblehouse" data-target="tab-bubblehouse">Bubblehouse</button>
+          <button class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-kombo"       id="btn-kombo"       data-target="tab-kombo">Ugrálóvár + Bubblehouse kombó</button>
         </div>
       </div>
 
-      <!-- Dekoráció kártyák -->
+      <!-- Dekoráció (változatlan minta) -->
       <div id="tab-dekor" role="tabpanel">
         <div class="cards">
           <article class="card">
@@ -239,28 +254,82 @@
         </div>
       </div>
 
-      <!-- Ugrálóvár / Bubblehouse kártyák -->
-      <div id="tab-ugralo" role="tabpanel" hidden>
+      <!-- Ugrálóvár -->
+      <div id="tab-ugralovar" role="tabpanel" hidden>
         <div class="cards">
           <article class="card">
-            <h3>Ugrálóvár – alap</h3>
-            <p>4 órás bérlés, helyszíni telepítés.</p>
-            <div class="price">39 900 Ft</div>
+            <h3>Alap csomag</h3>
+            <p>Ugrálóvár bérlés 4 órára, alap dekorral az ugrálóváron.</p>
+            <div class="price">70.000.-</div>
             <button class="btn btn-primary quote-btn">Ajánlatot kérek</button>
           </article>
           <article class="card">
-            <h3>Ugrálóvár – egész nap</h3>
-            <p>10 órás bérlés, felügyelettel kérhető.</p>
-            <div class="price">69 900 Ft</div>
+            <h3>Egész napos csomag</h3>
+            <p>Ugrálóvár bérlés egész napra, alap dekorral az ugrálóváron.</p>
+            <div class="price">110.000.-</div>
             <button class="btn btn-primary quote-btn">Ajánlatot kérek</button>
           </article>
           <article class="card">
-            <h3>Bubblehouse</h3>
-            <p>Átlátszó gömbház dekorral – fotózáshoz és partikhoz.</p>
-            <div class="price">egyedi ajánlat</div>
+            <h3>Prémium csomag</h3>
+            <p>Ugrálóvár (díszítve) bérlés egész napra, különálló nagy tematikus dekorral (állványok, dekorfal, 4-500 db lufi).</p>
+            <div class="price">195.000.-</div>
             <button class="btn btn-primary quote-btn">Ajánlatot kérek</button>
           </article>
         </div>
+        <p style="margin-top:8px">Az árak minden esetben tartalmazzák a kiszállás, installáció és bontás költségeit. Az ugrálóvárhoz jár 1000db labda a labdamedencében.</p>
+        <p>További egyedi igények esetén kérem vegye fel velünk a kapcsolatot.</p>
+      </div>
+
+      <!-- Bubblehouse -->
+      <div id="tab-bubblehouse" role="tabpanel" hidden>
+        <div class="cards">
+          <article class="card">
+            <h3>Alap csomag</h3>
+            <p>Bubblehouse bérlés 4 órára, alap dekorral a bubblehouse-on.</p>
+            <div class="price">55.000.-</div>
+            <button class="btn btn-primary quote-btn">Ajánlatot kérek</button>
+          </article>
+          <article class="card">
+            <h3>Egész napos csomag</h3>
+            <p>Bubblehouse bérlés egész napra, alap dekorral a bubblehouse-on.</p>
+            <div class="price">80.000.-</div>
+            <button class="btn btn-primary quote-btn">Ajánlatot kérek</button>
+          </article>
+          <article class="card">
+            <h3>Prémium csomag</h3>
+            <p>Bubblehouse (díszítve) bérlés egész napra, különálló nagy tematikus dekorral (állványok, dekorfal, 4-500 db lufi).</p>
+            <div class="price">160.000.-</div>
+            <button class="btn btn-primary quote-btn">Ajánlatot kérek</button>
+          </article>
+        </div>
+        <p style="margin-top:8px">Az árak minden esetben tartalmazzák a kiszállás, installáció és bontás költségeit.</p>
+        <p>További egyedi igények esetén kérem vegye fel velünk a kapcsolatot.</p>
+      </div>
+
+      <!-- Ugrálóvár + Bubblehouse kombó -->
+      <div id="tab-kombo" role="tabpanel" hidden>
+        <div class="cards">
+          <article class="card">
+            <h3>Alap csomag</h3>
+            <p>Ugrálóvár + Bubblehouse 4 órára,alap dekorral</p>
+            <div class="price">110.000.-</div>
+            <button class="btn btn-primary quote-btn">Ajánlatot kérek</button>
+          </article>
+          <article class="card">
+            <h3>Egész napos csomag</h3>
+            <p>Ugrálóvár + Bubblehouse egész napra,alap dekorral</p>
+            <div class="price">170.000.-</div>
+            <button class="btn btn-primary quote-btn">Ajánlatot kérek</button>
+          </article>
+          <article class="card">
+            <h3>Prémium csomag</h3>
+            <p>Ugrálóvár + Bubblehouse egész napra, meglévőnagy tematikus dekorral</p>
+            <div class="price">245.000.-</div>
+            <button class="btn btn-primary quote-btn">Ajánlatot kérek</button>
+          </article>
+        </div>
+        <p style="margin-top:8px">Az árak minden esetben tartalmazzák a kiszállás, installáció és bontás költségeit. Az ugrálóvárhoz jár 1000db labda a labdamedencében.</p>
+        <p>További egyedi igények esetén kérem vegye fel velünk a kapcsolatot.</p>
       </div>
 
     </div>
@@ -311,20 +380,55 @@
   </div>
 
   <script>
-    // ===== Tabs =====
-    const btnDekor=document.getElementById('btn-dekor');
-    const btnUgralo=document.getElementById('btn-ugralo');
-    const tabDekor=document.getElementById('tab-dekor');
-    const tabUgralo=document.getElementById('tab-ugralo');
-    function selectTab(which){const dekor=which==='dekor';btnDekor?.setAttribute('aria-selected',dekor);btnUgralo?.setAttribute('aria-selected',!dekor);if(tabDekor)tabDekor.hidden=!dekor;if(tabUgralo)tabUgralo.hidden=dekor;}
-    btnDekor?.addEventListener('click',()=>selectTab('dekor'));
-    btnUgralo?.addEventListener('click',()=>selectTab('ugralo'));
+    // ===== Hamburger menü =====
+    const navToggle=document.getElementById('navToggle');
+    const menu=document.getElementById('menu');
+    function closeMenu(){
+      menu.classList.remove('open');
+      navToggle.classList.remove('active');
+      navToggle.setAttribute('aria-expanded','false');
+    }
+    navToggle?.addEventListener('click', ()=>{
+      const open=menu.classList.toggle('open');
+      navToggle.classList.toggle('active', open);
+      navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    menu?.querySelectorAll('a').forEach(a=>a.addEventListener('click', closeMenu));
+    document.addEventListener('click',(e)=>{
+      if(window.matchMedia('(max-width: 920px)').matches){
+        if(!menu.contains(e.target) && !navToggle.contains(e.target)) closeMenu();
+      }
+    });
+    document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') closeMenu(); });
 
-    // ===== Galéria – képlista =====
+    // ===== Tabs (4 fül) =====
+    const tabButtons=[...document.querySelectorAll('.tab-btn')];
+    const tabPanels=[...document.querySelectorAll('#arak [role="tabpanel"]')];
+    function activateTab(targetId){
+      tabButtons.forEach(btn=>btn.setAttribute('aria-selected', btn.dataset.target===targetId));
+      tabPanels.forEach(p=>p.hidden = (p.id!==targetId));
+    }
+    tabButtons.forEach(btn=>{
+      btn.addEventListener('click', ()=>activateTab(btn.dataset.target));
+      btn.addEventListener('keydown', (e)=>{
+        if(e.key!=='ArrowRight' && e.key!=='ArrowLeft') return;
+        const i = tabButtons.indexOf(btn);
+        const next = e.key==='ArrowRight' ? (i+1)%tabButtons.length : (i-1+tabButtons.length)%tabButtons.length;
+        tabButtons[next].focus(); activateTab(tabButtons[next].dataset.target);
+      });
+    });
+    const initiallySelected = tabButtons.find(b=>b.getAttribute('aria-selected')==='true')?.dataset.target || 'tab-dekor';
+    activateTab(initiallySelected);
+
+    // ===== Galéria – képlista (img1…img30) =====
     const galleryImages=[
-      'assets/img/img1.jpg','assets/img/img3.jpg','assets/img/img5.jpg','assets/img/img6.jpg',
-      'assets/img/img8.jpg','assets/img/img9.jpg','assets/img/img11.jpg','assets/img/img12.jpg',
-      'assets/img/img14.jpg','assets/img/img15.jpg','assets/img/img16.jpg','assets/img/img18.jpg'
+      'assets/img/img1.jpg','assets/img/img2.jpg','assets/img/img3.jpg','assets/img/img4.jpg','assets/img/img5.jpg',
+    'assets/img/img6.jpg','assets/img/img7.jpg','assets/img/img8.jpg','assets/img/img9.jpg','assets/img/img10.jpg',
+    'assets/img/img11.jpg','assets/img/img12.jpg','assets/img/img13.jpg','assets/img/img14.jpg','assets/img/img15.jpg',
+    'assets/img/img16.jpg','assets/img/img17.jpg','assets/img/img18.jpg','assets/img/img19.jpg','assets/img/img20.jpg',
+    'assets/img/img21.jpg','assets/img/img22.jpg','assets/img/img23.jpg','assets/img/img24.jpg','assets/img/img25.jpg',
+    'assets/img/img26.jpg','assets/img/img27.jpg','assets/img/img28.jpg','assets/img/img29.jpg','assets/img/img30.jpg',
+    'assets/img/img31.jpg','assets/img/img32.jpg','assets/img/img33.jpg','assets/img/img34.jpg','assets/img/img35.jpg'
     ];
 
     // ===== Dinamikus kép-rotátorok (Hero + Rólunk) =====
@@ -422,7 +526,7 @@
       if(e.key==='ArrowLeft') prev();
     });
 
-    // ===== "Ajánlatot kérek" gombok → mailto (form helyett) =====
+    // ===== "Ajánlatot kérek" gombok → mailto =====
     document.querySelectorAll('.quote-btn').forEach(btn=>{
       btn.addEventListener('click', ()=>{
         const card=btn.closest('.card');
