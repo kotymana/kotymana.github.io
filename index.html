@@ -223,39 +223,24 @@
       <div class="section-head">
         <h2>Árak</h2>
         <div class="tabs" role="tablist" aria-label="Ártípusok">
-          <button class="tab-btn" role="tab" aria-selected="true"  aria-controls="tab-dekor"       id="btn-dekor"       data-target="tab-dekor">Dekoráció</button>
-          <button class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-ugralovar"   id="btn-ugralovar"  data-target="tab-ugralovar">Ugrálóvár</button>
+          <!--
+          EREDETI (REJTETT): <button class="tab-btn" role="tab" aria-selected="true" aria-controls="tab-dekor" id="btn-dekor" data-target="tab-dekor">Dekoráció</button>
+          -->
+          <button class="tab-btn" role="tab" aria-selected="true"  aria-controls="tab-ugralovar"   id="btn-ugralovar"  data-target="tab-ugralovar">Ugrálóvár</button>
           <button class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-bubblehouse" id="btn-bubblehouse" data-target="tab-bubblehouse">Bubblehouse</button>
           <button class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-kombo"       id="btn-kombo"       data-target="tab-kombo">Ugrálóvár + Bubblehouse kombó</button>
         </div>
       </div>
 
-      <!-- Dekoráció (változatlan minta) -->
+      <!--
+      EREDETI (REJTETT) – Dekoráció fül és tartalma:
       <div id="tab-dekor" role="tabpanel">
-        <div class="cards">
-          <article class="card">
-            <h3>Alap csomag</h3>
-            <p>Kisebb ünnepekre: 1 háttér, 1 dekor szett, alap felirat.</p>
-            <div class="price">29 900 Ft</div>
-            <button class="btn btn-primary quote-btn">Ajánlatot kérek</button>
-          </article>
-          <article class="card">
-            <h3>Standard</h3>
-            <p>Dupla háttér, asztaldekor, 3 féle kiegészítő.</p>
-            <div class="price">49 900 Ft</div>
-            <button class="btn btn-primary quote-btn">Ajánlatot kérek</button>
-          </article>
-          <article class="card">
-            <h3>Prémium</h3>
-            <p>Nagyobb eseményekre: egyedi paletta, felirat, helyszíni install.</p>
-            <div class="price">89 900 Ft</div>
-            <button class="btn btn-primary quote-btn">Ajánlatot kérek</button>
-          </article>
-        </div>
+        ... (kártyák) ...
       </div>
+      -->
 
       <!-- Ugrálóvár -->
-      <div id="tab-ugralovar" role="tabpanel" hidden>
+      <div id="tab-ugralovar" role="tabpanel">
         <div class="cards">
           <article class="card">
             <h3>Alap csomag</h3>
@@ -401,7 +386,7 @@
     });
     document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') closeMenu(); });
 
-    // ===== Tabs (4 fül) =====
+    // ===== Tabs (3 fül aktív) =====
     const tabButtons=[...document.querySelectorAll('.tab-btn')];
     const tabPanels=[...document.querySelectorAll('#arak [role="tabpanel"]')];
     function activateTab(targetId){
@@ -417,18 +402,19 @@
         tabButtons[next].focus(); activateTab(tabButtons[next].dataset.target);
       });
     });
-    const initiallySelected = tabButtons.find(b=>b.getAttribute('aria-selected')==='true')?.dataset.target || 'tab-dekor';
+    // Kezdeti állapot: ha nincs aria-selected=true, akkor Ugrálóvár
+    const initiallySelected = tabButtons.find(b=>b.getAttribute('aria-selected')==='true')?.dataset.target || 'tab-ugralovar';
     activateTab(initiallySelected);
 
-    // ===== Galéria – képlista (img1…img30) =====
+    // ===== Galéria – képlista (img1…img35) =====
     const galleryImages=[
       'assets/img/img1.jpg','assets/img/img2.jpg','assets/img/img3.jpg','assets/img/img4.jpg','assets/img/img5.jpg',
-    'assets/img/img6.jpg','assets/img/img7.jpg','assets/img/img8.jpg','assets/img/img9.jpg','assets/img/img10.jpg',
-    'assets/img/img11.jpg','assets/img/img12.jpg','assets/img/img13.jpg','assets/img/img14.jpg','assets/img/img15.jpg',
-    'assets/img/img16.jpg','assets/img/img17.jpg','assets/img/img18.jpg','assets/img/img19.jpg','assets/img/img20.jpg',
-    'assets/img/img21.jpg','assets/img/img22.jpg','assets/img/img23.jpg','assets/img/img24.jpg','assets/img/img25.jpg',
-    'assets/img/img26.jpg','assets/img/img27.jpg','assets/img/img28.jpg','assets/img/img29.jpg','assets/img/img30.jpg',
-    'assets/img/img31.jpg','assets/img/img32.jpg','assets/img/img33.jpg','assets/img/img34.jpg','assets/img/img35.jpg'
+      'assets/img/img6.jpg','assets/img/img7.jpg','assets/img/img8.jpg','assets/img/img9.jpg','assets/img/img10.jpg',
+      'assets/img/img11.jpg','assets/img/img12.jpg','assets/img/img13.jpg','assets/img/img14.jpg','assets/img/img15.jpg',
+      'assets/img/img16.jpg','assets/img/img17.jpg','assets/img/img18.jpg','assets/img/img19.jpg','assets/img/img20.jpg',
+      'assets/img/img21.jpg','assets/img/img22.jpg','assets/img/img23.jpg','assets/img/img24.jpg','assets/img/img25.jpg',
+      'assets/img/img26.jpg','assets/img/img27.jpg','assets/img/img28.jpg','assets/img/img29.jpg','assets/img/img30.jpg',
+      'assets/img/img31.jpg','assets/img/img32.jpg','assets/img/img33.jpg','assets/img/img34.jpg','assets/img/img35.jpg'
     ];
 
     // ===== Dinamikus kép-rotátorok (Hero + Rólunk) =====
