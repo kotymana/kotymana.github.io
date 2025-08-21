@@ -21,8 +21,8 @@
     .brand{font-size:20px;font-weight:700;letter-spacing:.06em}
     .brand em{font-style:normal;color:var(--peach)}
     nav .menu{display:flex;gap:22px;align-items:center}
-    .menu a{color:var(--ink-2);text-decoration:none;font-weight:600;letter-spacing:.02em;padding:8px 10px;border-radius:10px;transition:background-color .25s}
-    .menu a:hover{background:var(--mint)}
+    .menu a,.menu button.menu-link{color:var(--ink-2);text-decoration:none;font-weight:600;letter-spacing:.02em;padding:8px 10px;border-radius:10px;transition:background-color .25s}
+    .menu a:hover,.menu button.menu-link:hover{background:var(--mint)}
 
     /* Hamburger */
     .hamburger{display:none;appearance:none;background:transparent;border:none;width:44px;height:44px;border-radius:10px;align-items:center;justify-content:center;cursor:pointer}
@@ -112,6 +112,19 @@
     /* Lábléc */
     footer{padding:36px 20px;background:var(--white);border-top:1px solid #eee;color:#666}
 
+    /* === Jogi információk dropdown === */
+    .menu-group{position:relative}
+    .menu-link{appearance:none;background:transparent;border:none;cursor:pointer;font:inherit;display:inline-flex;align-items:center;gap:6px}
+    .menu-link .caret{display:inline-block;transition:transform .2s}
+    .menu-group.open .menu-link .caret{transform:rotate(180deg)}
+    .submenu{
+      position:absolute;top:calc(100% + 8px);right:0;min-width:220px;
+      background:var(--white);border:1px solid #eee;border-radius:12px;box-shadow:var(--shadow);
+      padding:8px;display:none;flex-direction:column;gap:4px;
+    }
+    .submenu a{display:block;padding:10px 12px;border-radius:10px}
+    .menu-group.open .submenu{display:flex}
+
     /* Reszponzív */
     @media (max-width:920px){
       .hamburger{display:inline-flex}
@@ -123,9 +136,14 @@
         opacity:0;pointer-events:none;
         transition:opacity .22s ease, transform .22s ease;
       }
-      nav .menu a{padding:10px 12px;border-radius:10px}
-      nav .menu a:hover{background:#f4f4f4}
+      nav .menu a,.menu button.menu-link{padding:10px 12px;border-radius:10px;width:100%;text-align:left}
+      nav .menu a:hover,.menu button.menu-link:hover{background:#f4f4f4}
       nav .menu.open{opacity:1;transform:scaleY(1);pointer-events:auto}
+
+      /* Submenu mobilon: blokkban, nem absolute */
+      .menu-group{width:100%}
+      .submenu{position:static;display:none;margin:4px 0 8px 8px;border-radius:10px}
+      .menu-group.open .submenu{display:flex}
       .cards{grid-template-columns:1fr}
       .gallery-grid{grid-template-columns:1fr}
       .hero-inner{grid-template-columns:1fr}
@@ -149,6 +167,19 @@
           <a href="#arak">Árak</a>
           <a href="#galeria">Galéria</a>
           <a href="#elerhetoseg">Elérhetőség</a>
+
+          <!-- ÚJ: Jogi információk lenyíló -->
+          <div class="menu-group" id="legalGroup">
+            <button class="menu-link" id="legalToggle" aria-haspopup="true" aria-expanded="false" aria-controls="legalSubmenu">
+              Jogi információk <span class="caret">▾</span>
+            </button>
+            <div class="submenu" id="legalSubmenu" role="menu" aria-label="Jogi információk">
+              <a role="menuitem" href="cegadatok.html">Cégadatok (Impresszum)</a>
+              <a role="menuitem" href="aszf.html">Általános Szerződési Feltételek (ÁSZF)</a>
+              <a role="menuitem" href="gdpr.html">Adatkezelési tájékoztató (GDPR)</a>
+            </div>
+          </div>
+          <!-- /ÚJ -->
         </div>
       </nav>
     </div>
@@ -223,21 +254,23 @@
       <div class="section-head">
         <h2>Árak</h2>
         <div class="tabs" role="tablist" aria-label="Ártípusok">
-          <!--
-          EREDETI (REJTETT): <button class="tab-btn" role="tab" aria-selected="true" aria-controls="tab-dekor" id="btn-dekor" data-target="tab-dekor">Dekoráció</button>
-          -->
+          <button class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-dekor" id="btn-dekor" data-target="tab-dekor">Dekoráció</button>
           <button class="tab-btn" role="tab" aria-selected="true"  aria-controls="tab-ugralovar"   id="btn-ugralovar"  data-target="tab-ugralovar">Ugrálóvár</button>
           <button class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-bubblehouse" id="btn-bubblehouse" data-target="tab-bubblehouse">Bubblehouse</button>
           <button class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-kombo"       id="btn-kombo"       data-target="tab-kombo">Ugrálóvár + Bubblehouse kombó</button>
         </div>
       </div>
 
-      <!--
-      EREDETI (REJTETT) – Dekoráció fül és tartalma:
-      <div id="tab-dekor" role="tabpanel">
-        ... (kártyák) ...
+      <!-- Dekoráció -->
+      <div id="tab-dekor" role="tabpanel" hidden>
+        <div class="cards">
+          <article class="card">
+            <h3>Egyedi ajánlat</h3>
+            <p>A dekorációk minden esetben egyéni árajánlat alapján készülnek, teljesen személyre szabva.</p>
+            <button class="btn btn-primary quote-btn">Ajánlatot kérek</button>
+          </article>
+        </div>
       </div>
-      -->
 
       <!-- Ugrálóvár -->
       <div id="tab-ugralovar" role="tabpanel">
@@ -372,6 +405,7 @@
       menu.classList.remove('open');
       navToggle.classList.remove('active');
       navToggle.setAttribute('aria-expanded','false');
+      closeLegal(); // submenu zárás
     }
     navToggle?.addEventListener('click', ()=>{
       const open=menu.classList.toggle('open');
@@ -386,7 +420,7 @@
     });
     document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') closeMenu(); });
 
-    // ===== Tabs (3 fül aktív) =====
+    // ===== Tabs (3 fül aktív + Dekoráció) =====
     const tabButtons=[...document.querySelectorAll('.tab-btn')];
     const tabPanels=[...document.querySelectorAll('#arak [role="tabpanel"]')];
     function activateTab(targetId){
@@ -532,6 +566,32 @@
         const href=`mailto:info@bubbleland.hu?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
         window.location.href = href;
       });
+    });
+
+    // ===== Jogi információk dropdown vezérlés =====
+    const legalGroup = document.getElementById('legalGroup');
+    const legalToggle = document.getElementById('legalToggle');
+    const legalSubmenu = document.getElementById('legalSubmenu');
+
+    function closeLegal(){
+      legalGroup?.classList.remove('open');
+      legalToggle?.setAttribute('aria-expanded','false');
+    }
+    function toggleLegal(){
+      const willOpen = !legalGroup.classList.contains('open');
+      legalGroup.classList.toggle('open', willOpen);
+      legalToggle.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+    }
+    legalToggle?.addEventListener('click', (e)=>{ e.stopPropagation(); toggleLegal(); });
+    document.addEventListener('click', (e)=>{
+      if(!legalGroup.contains(e.target)) closeLegal();
+    });
+    legalToggle?.addEventListener('keydown', (e)=>{
+      if(e.key==='ArrowDown'){ e.preventDefault(); legalGroup.classList.add('open'); legalToggle.setAttribute('aria-expanded','true'); legalSubmenu.querySelector('a')?.focus(); }
+      if(e.key==='Escape'){ closeLegal(); legalToggle.focus(); }
+    });
+    legalSubmenu?.addEventListener('keydown', (e)=>{
+      if(e.key==='Escape'){ closeLegal(); legalToggle.focus(); }
     });
 
     // Induló lap + év
